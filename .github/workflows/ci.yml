@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Muddle
+        uses: demonnic/build-with-muddler@v1.3
+
+      - name: Upload MPackage
+        uses: actions/upload-artifact@v3
+        with:
+          name: DuneMUD
+          path: build/tmp/
+

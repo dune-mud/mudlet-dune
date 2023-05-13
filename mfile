@@ -1,0 +1,8 @@
+{
+  "package": "DuneMUD",
+  "version": "0.0.1",
+  "author": "Paradox",
+  "title": "Official DuneMUD Mudlet Package",
+  "icon": "worm.png",
+  "outputFile": true
+}
