@@ -59,7 +59,9 @@ local function setupBaseLayout()
     name = "top",
     y = "0%",
     height = "10%",
-    --autoSave = false,
+    lockStyle = "border",
+    autoSave = false,
+    locked = true,
     autoLoad = false,
   })
 
@@ -67,7 +69,9 @@ local function setupBaseLayout()
     name = "bottom",
     height = "20%",
     y = "-20%",
-    --autoSave = false,
+    lockStyle = "border",
+    locked = true,
+    autoSave = false,
     autoLoad = false,
   })
 
@@ -77,7 +81,9 @@ local function setupBaseLayout()
     height = "100%",
     x = "-20%",
     width = "20%",
-    --autoSave = false,
+    lockStyle = "border",
+    locked = true,
+    autoSave = false,
     autoLoad = false
   })
 
@@ -87,7 +93,9 @@ local function setupBaseLayout()
     y = "0%",
     height = "100%",
     width = "20%",
-    --autoSave = false,
+    lockStyle = "border",
+    locked = true,
+    autoSave = false,
     autoLoad = false
   })
 end
