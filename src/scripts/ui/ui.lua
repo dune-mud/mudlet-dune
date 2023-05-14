@@ -10,6 +10,8 @@ DuneMUD.ui = DuneMUD.ui or {}
 
 local EMCO = require("@PKGNAME@.mdk.emco")
 
+require("@PKGNAME@.tabwindow.tabwindow")
+
 local channelsTabStyle = [[
   background-color: rgb(0,180,0,255);
   border-width: 1px;
@@ -88,9 +90,25 @@ local function setupChannels()
   }, GUI.top)
 end
 
+local function setupVitals()
+  DuneMUD.ui.GUI = DuneMUD.ui.GUI or {}
+  local GUI = DuneMUD.ui.GUI
+
+  GUI.vitalsWindow = GUI.vitalsWindow or Adjustable.TabWindow:new({
+    name = "vitalsWindow",
+    x = 0,
+    y = 0,
+    width = "100%",
+    height = "100%",
+    tabBarHeight ="10%",
+    tabs = {"Tab1", "Tab2", "Tab3"},
+  }, GUI.bottom)
+end
+
 function DuneMUD.ui.setup()
   setupBaseLayout()
   setupChannels()
+  setupVitals()
 
   DuneMUD.ui.show()
 end
@@ -121,11 +139,13 @@ function DuneMUD.ui.show()
   GUI.bottom:connectToBorder("right")
 
   GUI.channelEMCO:show()
+  GUI.vitalsWindow:show()
 end
 
 function DuneMUD.ui.hide()
   local GUI = DuneMUD.ui.GUI
 
+  GUI.vitalsWindow:hide()
   GUI.channelEMCO:hide()
 
   GUI.left:hide()
