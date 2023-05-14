@@ -22,6 +22,7 @@ DuneMUD.eventHandlers = {
   { "DuneMUDGMCPEnabled", "DuneMUD.gmcp.setup", nil },
   { "gmcp.Comm.Channel.List", "DuneMUD.gmcp.channelList", nil },
   { "gmcp.Comm.Channel.Text", "DuneMUD.gmcp.channelText", nil },
+  { "gmcp.Room.Info", "DuneMUD.gmcp.roomInfo", nil },
 
   -- UI handlers. These are defined in ui.lua and should only
   -- be reacting to DuneMUDXXX events.
@@ -30,6 +31,12 @@ DuneMUD.eventHandlers = {
   { "DuneMUDUninstalled", "DuneMUD.ui.tearDown", nil },
   { "DuneMUDChannelList", "DuneMUD.ui.onChannelList", nil },
   { "DuneMUDChannelText", "DuneMUD.ui.onChannelText", nil },
+
+  -- Mapper handlers. These are defined in mapper.lua and should
+  -- only be reacting to DuneMUDXXX events.
+  { "DuneMUDInstalled", "DuneMUD.map.setup", nil },
+  { "DuneMUDUninstalled", "DuneMUD.map.tearDown", nil },
+  { "DuneMUDRoomInfo", "DuneMUD.map.onRoomInfo", nil },
 }
 
 function DuneMUD.registerEventHandlers()

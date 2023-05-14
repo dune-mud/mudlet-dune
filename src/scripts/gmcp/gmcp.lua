@@ -27,3 +27,7 @@ end
 function DuneMUD.gmcp.channelText()
   raiseEvent("DuneMUDChannelText", gmcp.Comm.Channel.Text)
 end
+
+function DuneMUD.gmcp.roomInfo()
+  raiseEvent("DuneMUDRoomInfo", gmcp.Room.Info)
+end
