@@ -12,6 +12,29 @@ local EMCO = require("@PKGNAME@.mdk.emco")
 
 require("@PKGNAME@.tabwindow.tabwindow")
 
+-- Channels we'll create tabs for if the user has the channel enabled.
+-- Messages received on other channels will get lumped into the "all" and
+-- "other" tabs.
+local tabbedChans = {
+  chat = true,
+  discord = true,
+  newbie = true,
+
+  pk = true,
+
+  atreid = true,
+  war = true,
+  mind = true,
+  fremen = true,
+  tp = true,
+  matres = true,
+  sard = true,
+  speakers = true,
+  eye = true,
+  tls = true,
+  com = true,
+}
+
 local channelsTabStyle = [[
   background-color: rgb(0,180,0,255);
   border-width: 1px;
@@ -69,20 +92,21 @@ local function setupBaseLayout()
   })
 end
 
+-- TODO(@Paradox): break out setting for making tabs for other channels.
 local function setupChannels()
   DuneMUD.ui.GUI = DuneMUD.ui.GUI or {}
   local GUI = DuneMUD.ui.GUI
 
   GUI.channelEMCO = GUI.channelEMCO or EMCO:new({
-    x = "0",
-    y = "0",
+    x = "5",
+    y = "5",
     width = "100%",
     height = "100%",
     allTab = true,
     allTabName = "all",
     gap = 2,
     consoleColor = "black",
-    consoles = { "all" }, -- We add the rest dynamically.
+    consoles = { "all", "chat", "discord", "other" },
     timestamp = true,
     blink = true,
     activeTabCSS = channelsTabStyle,
@@ -161,7 +185,10 @@ function DuneMUD.ui.onChannelList(_, channelList)
     local chan_name = chan_info.name
     local chan_enabled = chan_info.enabled
 
-    if chan_enabled == 1 and not table.contains(channelEMCO.consoles, chan_name) then
+    if chan_enabled == 1 and
+       tabbedChans[chan_name] and
+       not table.contains(channelEMCO.consoles, chan_name)
+    then
       channelEMCO:addTab(chan_name)
     end
   end
@@ -173,10 +200,16 @@ function DuneMUD.ui.onChannelText(_, channelText)
   local chan_name = channelText.channel
   local text = channelText.channel_ansi .. " " .. channelText.text
 
-  if not table.contains(channelEMCO.consoles, chan_name) then
+  if tabbedChans[chan_name] and
+     not table.contains(channelEMCO.consoles, chan_name)
+  then
     channelEMCO:addTab(chan_name)
   end
 
-  channelEMCO:decho(chan_name, ansi2decho(text))
+  if tabbedChans[chan_name] then
+    channelEMCO:decho(chan_name, ansi2decho(text))
+  else
+    channelEMCO:decho("other", ansi2decho(text))
+  end
 end
 
