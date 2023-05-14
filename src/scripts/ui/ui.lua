@@ -51,52 +51,48 @@ local inactiveChannelsTabStyle = [[
   border-radius: 10px;
 ]]
 
+local containerDefaults = {
+  lockStyle = "border",
+  autoSave = false,
+  locked = true,
+  autoLoad = false,
+}
+
+local function adjContainer(settings)
+  local mergedSettings = table.update(table.deepcopy(containerDefaults), settings)
+  return Adjustable.Container:new(mergedSettings)
+end
+
 local function setupBaseLayout()
   DuneMUD.ui.GUI = DuneMUD.ui.GUI or {}
   local GUI = DuneMUD.ui.GUI
 
-  GUI.top = GUI.top or Adjustable.Container:new({
+  GUI.top = GUI.top or adjContainer({
     name = "top",
     y = "0%",
     height = "10%",
-    lockStyle = "border",
-    autoSave = false,
-    locked = true,
-    autoLoad = false,
   })
 
-  GUI.bottom = GUI.bottom or Adjustable.Container:new({
+  GUI.bottom = GUI.bottom or adjContainer({
     name = "bottom",
     height = "20%",
     y = "-20%",
-    lockStyle = "border",
-    locked = true,
-    autoSave = false,
-    autoLoad = false,
   })
 
-  GUI.right = GUI.right or Adjustable.Container:new({
+  GUI.right = GUI.right or adjContainer({
     name = "right",
     y = "0%",
     height = "100%",
     x = "-20%",
     width = "20%",
-    lockStyle = "border",
-    locked = true,
-    autoSave = false,
-    autoLoad = false
   })
 
-  GUI.left = GUI.left or Adjustable.Container:new({
+  GUI.left = GUI.left or adjContainer({
     name = "left",
     x = "0%",
     y = "0%",
     height = "100%",
     width = "20%",
-    lockStyle = "border",
-    locked = true,
-    autoSave = false,
-    autoLoad = false
   })
 end
 
