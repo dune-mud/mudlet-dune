@@ -169,18 +169,19 @@ local function handle_move()
 end
 
 function DuneMUD.map.setup()
-  --Check if the generic_mapper package is installed and if so uninstall it
-  --DuneMUD is not compatible with this.
-  if table.contains(getPackages(),"generic_mapper") then
+  -- Check if the generic_mapper package is installed and if so uninstall it
+  -- DuneMUD is not compatible with this.
+  if table.contains(getPackages(), "generic_mapper") then
     uninstallPackage("generic_mapper")
   end
 end
 
 function DuneMUD.map.tearDown()
-  if not table.contains(getPackages(), "generic_mapper") then
-    local generic_mapper_url = "https://raw.githubusercontent.com/Mudlet/Mudlet/development/src/mudlet-lua/lua/generic-mapper/generic_mapper.xml"
-    installPackage(generic_mapper_url)
-  end
+  -- TODO(@Paradox): Revisit.
+  --if not table.contains(getPackages(), "generic_mapper") then
+  --  local generic_mapper_url = "https://raw.githubusercontent.com/Mudlet/Mudlet/development/src/mudlet-lua/lua/generic-mapper/generic_mapper.xml"
+  --  installPackage(generic_mapper_url)
+  --end
 end
 
 function DuneMUD.map.onRoomInfo(_, ...)

@@ -9,6 +9,9 @@ local defaultConfig = {
   -- Used for registering event handlers, etc. Does not need to match in-game
   -- username.
   user = 'DuneMUD',
+
+  -- Extra channel capture tabs.
+  extraTabbedChans = { hockey = true, newbie = true },
 }
 
 DuneMUD = DuneMUD or {}
@@ -20,9 +23,13 @@ DuneMUD.eventHandlers = {
   -- GMCP handlers. These are defined in gmcp.lua and should mostly
   -- translate between GMCP events and our own DuneMUDXXX events.
   { "DuneMUDGMCPEnabled", "DuneMUD.gmcp.setup", nil },
+  { "gmcp.Char.Name", "DuneMUD.gmcp.charName", nil },
   { "gmcp.Comm.Channel.List", "DuneMUD.gmcp.channelList", nil },
   { "gmcp.Comm.Channel.Text", "DuneMUD.gmcp.channelText", nil },
   { "gmcp.Room.Info", "DuneMUD.gmcp.roomInfo", nil },
+
+  -- Character handlers.
+  { "DuneMUDLogin", "DuneMUD.character.login", nil },
 
   -- UI handlers. These are defined in ui.lua and should only
   -- be reacting to DuneMUDXXX events.
@@ -38,6 +45,27 @@ DuneMUD.eventHandlers = {
   { "DuneMUDUninstalled", "DuneMUD.map.tearDown", nil },
   { "DuneMUDRoomInfo", "DuneMUD.map.onRoomInfo", nil },
 }
+
+-- Guild event handlers.
+local supportedGuilds = {
+  "none",
+  "Tleilax",
+}
+for _, guild in ipairs(supportedGuilds) do
+  -- Load
+  table.insert(DuneMUD.eventHandlers, {
+    "DuneMUDLoadGuild", 
+    string.format("DuneMUD.guild.%s.setup", guild),
+    nil,
+  })
+
+  -- Uninstall
+  table.insert(DuneMUD.eventHandlers, {
+    "DuneMUDUninstalled", 
+    string.format("DuneMUD.guild.%s.tearDown", guild), 
+    nil,
+  })
+end 
 
 function DuneMUD.registerEventHandlers()
   for i, v in ipairs(DuneMUD.eventHandlers) do
@@ -55,6 +83,8 @@ end
 
 local function onInstall(_, package)
   if package ~= "@PKGNAME@" then return end
+
+  DuneMUD.config = defaultConfig
 
   DuneMUD.registerEventHandlers()
   raiseEvent("DuneMUDInstalled")

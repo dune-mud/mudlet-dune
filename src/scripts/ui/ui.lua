@@ -7,6 +7,7 @@
 DuneMUD = DuneMUD or {}
 DuneMUD.config = DuneMUD.config or {}
 DuneMUD.ui = DuneMUD.ui or {}
+DuneMUD.ui.GUI = DuneMUD.ui.GUI or {}
 
 local EMCO = require("@PKGNAME@.mdk.emco")
 
@@ -38,7 +39,6 @@ local tabbedChans = {
 local channelsTabStyle = [[
   background-color: rgb(0,180,0,255);
   border-width: 1px;
-  border-style: solid;
   border-color: gold; 
   border-radius: 10px;
 ]]
@@ -64,7 +64,6 @@ local function adjContainer(settings)
 end
 
 local function setupBaseLayout()
-  DuneMUD.ui.GUI = DuneMUD.ui.GUI or {}
   local GUI = DuneMUD.ui.GUI
 
   GUI.top = GUI.top or adjContainer({
@@ -81,9 +80,9 @@ local function setupBaseLayout()
 
   GUI.right = GUI.right or adjContainer({
     name = "right",
-    y = "0%",
-    height = "100%",
     x = "-20%",
+    y = 0,
+    height = "100%",
     width = "20%",
   })
 
@@ -96,9 +95,7 @@ local function setupBaseLayout()
   })
 end
 
--- TODO(@Paradox): break out setting for making tabs for other channels.
 local function setupChannels()
-  DuneMUD.ui.GUI = DuneMUD.ui.GUI or {}
   local GUI = DuneMUD.ui.GUI
 
   GUI.channelEMCO = GUI.channelEMCO or EMCO:new({
@@ -119,7 +116,6 @@ local function setupChannels()
 end
 
 local function setupVitals()
-  DuneMUD.ui.GUI = DuneMUD.ui.GUI or {}
   local GUI = DuneMUD.ui.GUI
 
   GUI.vitalsWindow = GUI.vitalsWindow or Adjustable.TabWindow:new({
@@ -133,10 +129,41 @@ local function setupVitals()
   }, GUI.bottom)
 end
 
+local function setupMap()
+  local GUI = DuneMUD.ui.GUI
+
+  GUI.map = GUI.map or
+    Geyser.Mapper:new({
+      x = 5,
+      y = "50%",
+      width = "100%",
+      height = "50%",
+      name = "map",
+    }, GUI.right)
+end
+
+local function setupTopRight()
+  local GUI = DuneMUD.ui.GUI
+
+  GUI.topRight = GUI.topRight or Adjustable.TabWindow:new({
+    name = "topRight",
+    x = 5,
+    y = 0,
+    width = "100%",
+    height = "50%",
+    tabBarHeight ="10%",
+    tabs = {"Tab1", "Tab2", "Tab3"},
+  }, GUI.right)
+end
+
 function DuneMUD.ui.setup()
+  DuneMUD.ui.GUI = DuneMUD.ui.GUI or {}
+
   setupBaseLayout()
   setupChannels()
   setupVitals()
+  setupTopRight()
+  setupMap()
 
   DuneMUD.ui.show()
 end
@@ -144,7 +171,7 @@ end
 function DuneMUD.ui.tearDown()
   DuneMUD.ui.hide()
 
-  DuneMUD.ui.GUI = {}
+  DuneMUD.ui.GUI = nil
   DuneMUD.ui = nil
 end
 
@@ -165,16 +192,10 @@ function DuneMUD.ui.show()
   GUI.top:connectToBorder("right")
   GUI.bottom:connectToBorder("left")
   GUI.bottom:connectToBorder("right")
-
-  GUI.channelEMCO:show()
-  GUI.vitalsWindow:show()
 end
 
 function DuneMUD.ui.hide()
   local GUI = DuneMUD.ui.GUI
-
-  GUI.vitalsWindow:hide()
-  GUI.channelEMCO:hide()
 
   GUI.left:hide()
   GUI.right:hide()
@@ -188,11 +209,10 @@ function DuneMUD.ui.onChannelList(_, channelList)
   for _, chan_info in ipairs(channelList) do
     local chan_name = chan_info.name
     local chan_enabled = chan_info.enabled
+    local tabbed = (tabbedChans[chan_name] or DuneMUD.config.extraTabbedChans[chan_name])
+    local tab_exists = table.contains(channelEMCO.consoles, chan_name)
 
-    if chan_enabled == 1 and
-       tabbedChans[chan_name] and
-       not table.contains(channelEMCO.consoles, chan_name)
-    then
+    if chan_enabled == 1 and tabbed and not tab_exists then
       channelEMCO:addTab(chan_name)
     end
   end
@@ -203,14 +223,14 @@ function DuneMUD.ui.onChannelText(_, channelText)
 
   local chan_name = channelText.channel
   local text = channelText.channel_ansi .. " " .. channelText.text
+  local tabbed = (tabbedChans[chan_name] or DuneMUD.config.extraTabbedChans[chan_name])
+  local tab_exists = table.contains(channelEMCO.consoles, chan_name)
 
-  if tabbedChans[chan_name] and
-     not table.contains(channelEMCO.consoles, chan_name)
-  then
+  if tabbed and not tab_exists then
     channelEMCO:addTab(chan_name)
   end
 
-  if tabbedChans[chan_name] then
+  if tabbed then
     channelEMCO:decho(chan_name, ansi2decho(text))
   else
     channelEMCO:decho("other", ansi2decho(text))
