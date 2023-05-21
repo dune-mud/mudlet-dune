@@ -125,8 +125,30 @@ local function setupVitals()
     width = "100%",
     height = "100%",
     tabBarHeight ="10%",
-    tabs = {"Tab1", "Tab2", "Tab3"},
+    tabs = {"Vitals", "Tab2", "Tab3"},
   }, GUI.bottom)
+
+  GUI.vitalsGaugeBox = GUI.vitalsGaugeBox or Geyser.VBox:new({
+    name="vitalsGaugeBox",
+    x = 15,
+    y = 15,
+    height = -15,
+    width = -15,
+  }, GUI.vitalsWindow.Vitalscenter)
+
+  GUI.hpGauge = GUI.hpGauge or Geyser.Gauge:new({
+    name = "hpGauge",
+  }, GUI.vitalsGaugeBox)
+  GUI.hpGauge:setValue(1, 100, "No character connected...")
+
+  GUI.cpGauge = GUI.cpGauge or Geyser.Gauge:new({
+    name = "cpGauge",
+  }, GUI.vitalsGaugeBox)
+  GUI.cpGauge:setValue(1, 100, "No character connected...")
+
+  -- Hide gauges until we log in and get values.
+  --GUI.hpGauge:hide()
+  --GUI.cpGauge:hide()
 end
 
 local function setupMap()
@@ -201,6 +223,36 @@ function DuneMUD.ui.hide()
   GUI.right:hide()
   GUI.bottom:hide()
   GUI.top:hide()
+end
+
+function DuneMUD.ui.onVitalsUpdated(_, characterVitals)
+  local GUI = DuneMUD.ui.GUI
+  local characterVitals = characterVitals or {}
+
+  local hp = characterVitals.hp or 80
+  local maxhp = characterVitals.maxhp or 100
+  if maxhp > 0 then
+    local hppercent = (hp / maxhp) * 100
+    GUI.hpGauge:echo(string.format("%d/%d HP (%d%%)", hp, maxhp, hppercent))
+    -- Dune lets you have more than 100% HP, but setting the gauge this way
+    -- results in over-drawing.
+    if hppercent > 100 then
+      maxhp = hp
+    end
+    GUI.hpGauge:setValue(hp, maxhp)
+  end
+
+  local cp = characterVitals.cp or 80
+  local maxcp = characterVitals.maxcp or 100
+  if maxcp > 0 then
+    local cppercent = (cp / maxcp) * 100
+    GUI.cpGauge:echo(string.format("%d/%d CP (%d%%)", cp, maxcp, cppercent))
+    -- Ditto for CP. Don't over-draw for 100%+
+    if cppercent > 100 then
+      maxcp = cp
+    end
+    GUI.cpGauge:setValue(cp, maxcp)
+  end
 end
 
 function DuneMUD.ui.onChannelList(_, channelList)

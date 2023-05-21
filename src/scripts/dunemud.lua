@@ -24,12 +24,14 @@ DuneMUD.eventHandlers = {
   -- translate between GMCP events and our own DuneMUDXXX events.
   { "DuneMUDGMCPEnabled", "DuneMUD.gmcp.setup", nil },
   { "gmcp.Char.Name", "DuneMUD.gmcp.charName", nil },
+  { "gmcp.Char.Vitals", "DuneMUD.gmcp.charVitals", nil },
   { "gmcp.Comm.Channel.List", "DuneMUD.gmcp.channelList", nil },
   { "gmcp.Comm.Channel.Text", "DuneMUD.gmcp.channelText", nil },
   { "gmcp.Room.Info", "DuneMUD.gmcp.roomInfo", nil },
 
   -- Character handlers.
   { "DuneMUDLogin", "DuneMUD.character.login", nil },
+  { "DuneMUDVitals", "DuneMUD.character.vitalsUpdate", nil },
 
   -- UI handlers. These are defined in ui.lua and should only
   -- be reacting to DuneMUDXXX events.
@@ -38,6 +40,7 @@ DuneMUD.eventHandlers = {
   { "DuneMUDUninstalled", "DuneMUD.ui.tearDown", nil },
   { "DuneMUDChannelList", "DuneMUD.ui.onChannelList", nil },
   { "DuneMUDChannelText", "DuneMUD.ui.onChannelText", nil },
+  { "DuneMUDVitalsUpdated", "DuneMUD.ui.onVitalsUpdated", nil },
 
   -- Mapper handlers. These are defined in mapper.lua and should
   -- only be reacting to DuneMUDXXX events.
