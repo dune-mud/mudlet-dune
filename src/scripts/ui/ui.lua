@@ -162,7 +162,7 @@ local function setupTopRight()
     width = "100%",
     height = "50%",
     tabBarHeight ="10%",
-    tabs = {"Stats"},
+    tabs = {"Stats", "Cooldowns"},
   }, GUI.right)
 end
 
@@ -251,6 +251,8 @@ function DuneMUD.ui.onChannelList(_, channelList)
       channelEMCO:addTab(chan_name)
     end
   end
+
+  channelEMCO:switchTab("all")
 end
 
 function DuneMUD.ui.onChannelText(_, channelText)
