@@ -85,14 +85,6 @@ local function setupBaseLayout()
     height = "100%",
     width = "20%",
   })
-
-  GUI.left = GUI.left or adjContainer({
-    name = "left",
-    x = "0%",
-    y = "0%",
-    height = "100%",
-    width = "20%",
-  })
 end
 
 local function setupChannels()
@@ -145,10 +137,6 @@ local function setupVitals()
     name = "cpGauge",
   }, GUI.vitalsGaugeBox)
   GUI.cpGauge:setValue(1, 100, "No character connected...")
-
-  -- Hide gauges until we log in and get values.
-  --GUI.hpGauge:hide()
-  --GUI.cpGauge:hide()
 end
 
 local function setupMap()
@@ -203,23 +191,18 @@ function DuneMUD.ui.show()
   GUI.top:show()
   GUI.bottom:show()
   GUI.right:show()
-  GUI.left:show()
 
   GUI.top:attachToBorder("top")
   GUI.bottom:attachToBorder("bottom")
-  GUI.left:attachToBorder("left")
   GUI.right:attachToBorder("right")
 
-  GUI.top:connectToBorder("left")
   GUI.top:connectToBorder("right")
-  GUI.bottom:connectToBorder("left")
   GUI.bottom:connectToBorder("right")
 end
 
 function DuneMUD.ui.hide()
   local GUI = DuneMUD.ui.GUI
 
-  GUI.left:hide()
   GUI.right:hide()
   GUI.bottom:hide()
   GUI.top:hide()
