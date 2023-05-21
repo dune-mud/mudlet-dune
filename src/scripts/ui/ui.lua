@@ -117,7 +117,7 @@ local function setupVitals()
     width = "100%",
     height = "100%",
     tabBarHeight ="10%",
-    tabs = {"Vitals", "Tab2", "Tab3"},
+    tabs = {"Vitals", "Tab 2"},
   }, GUI.bottom)
 
   GUI.vitalsGaugeBox = GUI.vitalsGaugeBox or Geyser.VBox:new({
@@ -162,7 +162,7 @@ local function setupTopRight()
     width = "100%",
     height = "50%",
     tabBarHeight ="10%",
-    tabs = {"Tab1", "Tab2", "Tab3"},
+    tabs = {"Stats"},
   }, GUI.right)
 end
 
