@@ -208,34 +208,34 @@ function DuneMUD.ui.hide()
   GUI.top:hide()
 end
 
-function DuneMUD.ui.onVitalsUpdated(_, characterVitals)
+local function updateVitalsGauge(gaugeType, currentValue, maxValue)
   local GUI = DuneMUD.ui.GUI
-  local characterVitals = characterVitals or {}
+  local gauge = GUI[gaugeType .. "Gauge"]
 
-  local hp = characterVitals.hp or 80
-  local maxhp = characterVitals.maxhp or 100
-  if maxhp > 0 then
-    local hppercent = (hp / maxhp) * 100
-    GUI.hpGauge:echo(string.format("%d/%d HP (%d%%)", hp, maxhp, hppercent))
-    -- Dune lets you have more than 100% HP, but setting the gauge this way
-    -- results in over-drawing.
-    if hppercent > 100 then
-      maxhp = hp
-    end
-    GUI.hpGauge:setValue(hp, maxhp)
+  if gauge == nil then
+    return
   end
 
-  local cp = characterVitals.cp or 80
-  local maxcp = characterVitals.maxcp or 100
-  if maxcp > 0 then
-    local cppercent = (cp / maxcp) * 100
-    GUI.cpGauge:echo(string.format("%d/%d CP (%d%%)", cp, maxcp, cppercent))
-    -- Ditto for CP. Don't over-draw for 100%+
-    if cppercent > 100 then
-      maxcp = cp
-    end
-    GUI.cpGauge:setValue(cp, maxcp)
+  local gaugePercent = (currentValue / maxValue) * 100
+  local vitalsTemplate = "<center>%d/%d %s (%d%%)</center>"
+  gauge:echo(string.format(vitalsTemplate, currentValue, maxValue, string.upper(gaugeType), gaugePercent))
+
+  if gaugePercent > 100 then
+    maxValue = currentValue
   end
+  gauge:setValue(currentValue, maxValue)
+end
+
+function DuneMUD.ui.onVitalsUpdated(_, characterVitals)
+  -- setup fallback values just in case
+  characterVitals = characterVitals or {}
+  characterVitals.hp = characterVitals.hp or 80
+  characterVitals.maxhp = characterVitals.maxhp or 100
+  characterVitals.cp = characterVitals.cp or 80
+  characterVitals.maxcp = characterVitals.maxcp or 100
+  -- update gauges
+  updateVitalsGauge("hp", characterVitals.hp, characterVitals.maxhp)
+  updateVitalsGauge("cp", characterVitals.cp, characterVitals.maxcp)
 end
 
 function DuneMUD.ui.onChannelList(_, channelList)
