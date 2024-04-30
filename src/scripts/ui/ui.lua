@@ -10,6 +10,7 @@ DuneMUD.ui = DuneMUD.ui or {}
 DuneMUD.ui.GUI = DuneMUD.ui.GUI or {}
 
 local EMCO = require("@PKGNAME@.mdk.emco")
+local SUG = require("@PKGNAME@.mdk.sug")
 
 require("@PKGNAME@.tabwindow.tabwindow")
 
@@ -107,6 +108,18 @@ local function setupChannels()
   }, GUI.top)
 end
 
+local function getGaugeCss(backgroundColor)
+  local res = f[[
+		background-color: {backgroundColor};
+		border-style: solid;
+		border-color: white;
+		border-width: 1px;
+		border-radius: 5px;
+		margin: 5px;
+	]]
+	return res
+end
+
 local function setupVitals()
   local GUI = DuneMUD.ui.GUI
 
@@ -128,15 +141,28 @@ local function setupVitals()
     width = -15,
   }, GUI.vitalsWindow.Vitalscenter)
 
-  GUI.hpGauge = GUI.hpGauge or Geyser.Gauge:new({
+  GUI.hpGauge = GUI.hpGauge or SUG:new({
     name = "hpGauge",
+    updateEvent = "gmcp.Char.Vitals",
+    textTemplate = "<center>|c/|m HP (|p%)</center>",
+    currentVariable = "gmcp.Char.Vitals.hp",
+    maxVariable = "gmcp.Char.Vitals.maxhp"
   }, GUI.vitalsGaugeBox)
-  GUI.hpGauge:setValue(1, 100, "No character connected...")
-
-  GUI.cpGauge = GUI.cpGauge or Geyser.Gauge:new({
+  GUI.hpGauge.front:setStyleSheet(getGaugeCss("green"))
+  GUI.hpGauge.back:setStyleSheet(getGaugeCss("black"))
+  GUI.hpGauge:setFontSize(14)
+  
+  GUI.cpGauge = GUI.cpGauge or SUG:new({
     name = "cpGauge",
+    updateEvent = "gmcp.Char.Vitals",
+    textTemplate = "<center>|c/|m CP (|p%)</center>",
+    currentVariable = "gmcp.Char.Vitals.sp",
+    maxVariable = "gmcp.Char.Vitals.maxsp",
   }, GUI.vitalsGaugeBox)
-  GUI.cpGauge:setValue(1, 100, "No character connected...")
+  GUI.cpGauge.front:setStyleSheet(getGaugeCss("goldenrod"))
+  GUI.cpGauge.back:setStyleSheet(getGaugeCss("black"))
+  GUI.cpGauge:setFontSize(14)
+
 end
 
 local function setupMap()
@@ -166,6 +192,25 @@ local function setupTopRight()
   }, GUI.right)
 end
 
+local function setupStats()
+    local GUI = DuneMUD.ui.GUI
+
+    GUI.statsBox = GUI.statsBox or Geyser.VBox:new({
+      name = "statsBox",
+      width = "99%",
+      height = "99%",
+    }, GUI.topRight.Statscenter)
+
+    GUI.statsConsole = GUI.statsConsole or Geyser.MiniConsole:new({
+      name = "statsConsole",
+      color = "black",
+      scrollBar = false,
+      fontSize = 12,
+    }, GUI.statsBox)
+
+    GUI.statsConsole:echo("Hello from statsBox!")
+end
+
 function DuneMUD.ui.setup()
   DuneMUD.ui.GUI = DuneMUD.ui.GUI or {}
 
@@ -173,6 +218,7 @@ function DuneMUD.ui.setup()
   setupChannels()
   setupVitals()
   setupTopRight()
+  setupStats()
   setupMap()
 
   DuneMUD.ui.show()
@@ -206,36 +252,6 @@ function DuneMUD.ui.hide()
   GUI.right:hide()
   GUI.bottom:hide()
   GUI.top:hide()
-end
-
-local function updateVitalsGauge(gaugeType, currentValue, maxValue)
-  local GUI = DuneMUD.ui.GUI
-  local gauge = GUI[gaugeType .. "Gauge"]
-
-  if gauge == nil then
-    return
-  end
-
-  local gaugePercent = (currentValue / maxValue) * 100
-  local vitalsTemplate = "<center>%d/%d %s (%d%%)</center>"
-  gauge:echo(string.format(vitalsTemplate, currentValue, maxValue, string.upper(gaugeType), gaugePercent))
-
-  if gaugePercent > 100 then
-    maxValue = currentValue
-  end
-  gauge:setValue(currentValue, maxValue)
-end
-
-function DuneMUD.ui.onVitalsUpdated(_, characterVitals)
-  -- setup fallback values just in case
-  characterVitals = characterVitals or {}
-  characterVitals.hp = characterVitals.hp or 80
-  characterVitals.maxhp = characterVitals.maxhp or 100
-  characterVitals.cp = characterVitals.cp or 80
-  characterVitals.maxcp = characterVitals.maxcp or 100
-  -- update gauges
-  updateVitalsGauge("hp", characterVitals.hp, characterVitals.maxhp)
-  updateVitalsGauge("cp", characterVitals.cp, characterVitals.maxcp)
 end
 
 function DuneMUD.ui.onChannelList(_, channelList)

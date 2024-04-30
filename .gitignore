@@ -2,3 +2,4 @@ build/
 .output
 notes.txt
 build.sh
+muddler-cmd.ps1
