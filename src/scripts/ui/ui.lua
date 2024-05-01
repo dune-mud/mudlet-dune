@@ -11,6 +11,7 @@ DuneMUD.ui.GUI = DuneMUD.ui.GUI or {}
 
 local EMCO = require("@PKGNAME@.mdk.emco")
 local SUG = require("@PKGNAME@.mdk.sug")
+local TableMaker = require("@PKGNAME@.mdk.ftext").TableMaker
 
 require("@PKGNAME@.tabwindow.tabwindow")
 
@@ -143,10 +144,10 @@ local function setupVitals()
 
   GUI.hpGauge = GUI.hpGauge or SUG:new({
     name = "hpGauge",
-    updateEvent = "gmcp.Char.Vitals",
+    updateEvent = "DuneMUD.character.vitalsUpdated",
     textTemplate = "<center>|c/|m HP (|p%)</center>",
-    currentVariable = "gmcp.Char.Vitals.hp",
-    maxVariable = "gmcp.Char.Vitals.maxhp"
+    currentVariable = "DuneMUD.character.hp",
+    maxVariable = "DuneMUD.character.maxhp"
   }, GUI.vitalsGaugeBox)
   GUI.hpGauge.front:setStyleSheet(getGaugeCss("green"))
   GUI.hpGauge.back:setStyleSheet(getGaugeCss("black"))
@@ -154,10 +155,10 @@ local function setupVitals()
   
   GUI.cpGauge = GUI.cpGauge or SUG:new({
     name = "cpGauge",
-    updateEvent = "gmcp.Char.Vitals",
+    updateEvent = "DuneMUD.character.vitalsUpdated",
     textTemplate = "<center>|c/|m CP (|p%)</center>",
-    currentVariable = "gmcp.Char.Vitals.sp",
-    maxVariable = "gmcp.Char.Vitals.maxsp",
+    currentVariable = "DuneMUD.character.cp",
+    maxVariable = "DuneMUD.character.maxcp",
   }, GUI.vitalsGaugeBox)
   GUI.cpGauge.front:setStyleSheet(getGaugeCss("goldenrod"))
   GUI.cpGauge.back:setStyleSheet(getGaugeCss("black"))
@@ -193,22 +194,39 @@ local function setupTopRight()
 end
 
 local function setupStats()
-    local GUI = DuneMUD.ui.GUI
+  local GUI = DuneMUD.ui.GUI
 
-    GUI.statsBox = GUI.statsBox or Geyser.VBox:new({
-      name = "statsBox",
-      width = "99%",
-      height = "99%",
-    }, GUI.topRight.Statscenter)
+  GUI.statsBox = GUI.statsBox or Geyser.VBox:new({
+    name = "statsBox",
+    x = 15,
+    y = 15,
+    height = -15,
+    width = -15,
+  }, GUI.topRight.Statscenter)
 
-    GUI.statsConsole = GUI.statsConsole or Geyser.MiniConsole:new({
-      name = "statsConsole",
-      color = "black",
-      scrollBar = false,
-      fontSize = 12,
-    }, GUI.statsBox)
+  GUI.statsConsole = GUI.statsConsole or Geyser.MiniConsole:new({
+    name = "statsConsole",
+    color = "black",
+    scrollBar = false,
+    fontSize = 14,
+  }, GUI.statsBox)
+  
+  local testMaker = TableMaker:new({
+    title = "Stats",
+    printTitle = "true",
+    titleColor = "<red>",
+    printHeaders = false,
+  })
 
-    GUI.statsConsole:echo("Hello from statsBox!")
+  testMaker:addColumn({ name = "Stat" , width = 19, textColor = "<orange>"})
+  testMaker:addColumn({name = "", width = 19, textColor = "<green>"})
+  testMaker:addRow({ "Strength", "1" })
+  testMaker:addRow({ "Constitution", "1" })
+  testMaker:addRow({ "Intelligence", "1" })
+  testMaker:addRow({ "Wisdom", "1" })
+  testMaker:addRow({ "Dexterity", "1" })
+  testMaker:addRow({ "Quickness", "1" })
+  GUI.statsConsole:cecho(testMaker:assemble())
 end
 
 function DuneMUD.ui.setup()
