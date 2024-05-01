@@ -147,7 +147,8 @@ local function setupVitals()
     updateEvent = "DuneMUD.character.vitalsUpdated",
     textTemplate = "<center>|c/|m HP (|p%)</center>",
     currentVariable = "DuneMUD.character.hp",
-    maxVariable = "DuneMUD.character.maxhp"
+    maxVariable = "DuneMUD.character.maxhp",
+    strict = true,
   }, GUI.vitalsGaugeBox)
   GUI.hpGauge.front:setStyleSheet(getGaugeCss("green"))
   GUI.hpGauge.back:setStyleSheet(getGaugeCss("black"))
@@ -159,6 +160,7 @@ local function setupVitals()
     textTemplate = "<center>|c/|m CP (|p%)</center>",
     currentVariable = "DuneMUD.character.cp",
     maxVariable = "DuneMUD.character.maxcp",
+    strict = true,
   }, GUI.vitalsGaugeBox)
   GUI.cpGauge.front:setStyleSheet(getGaugeCss("goldenrod"))
   GUI.cpGauge.back:setStyleSheet(getGaugeCss("black"))
@@ -218,7 +220,7 @@ local function setupStats()
     printHeaders = false,
   })
 
-  testMaker:addColumn({ name = "Stat" , width = 19, textColor = "<orange>"})
+  testMaker:addColumn({ name = "Stats" , width = 19, textColor = "<orange>"})
   testMaker:addColumn({name = "", width = 19, textColor = "<green>"})
   testMaker:addRow({ "Strength", "1" })
   testMaker:addRow({ "Constitution", "1" })
@@ -270,6 +272,28 @@ function DuneMUD.ui.hide()
   GUI.right:hide()
   GUI.bottom:hide()
   GUI.top:hide()
+end
+
+function DuneMUD.ui.onStatusUpdate(_, charStatus)
+end
+
+function DuneMUD.ui.onStatsUpdate(_, charStats)
+  local GUI = DuneMUD.ui.GUI
+
+  local testMaker = TableMaker:new({
+    title = "Stats",
+    printTitle = "true",
+    titleColor = "<red>",
+    printHeaders = false,
+  })
+
+  testMaker:addColumn({ name = "Stats" , width = 19, textColor = "<orange>"})
+  testMaker:addColumn({name = "", width = 19, textColor = "<green>"})
+  for k, v in pairs(charStats) do
+    testMaker:addRow({ k, tostring(v)})
+  end
+  GUI.statsConsole:clear()
+  GUI.statsConsole:cecho(testMaker:assemble())
 end
 
 function DuneMUD.ui.onChannelList(_, channelList)

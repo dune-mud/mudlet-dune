@@ -28,6 +28,10 @@ function DuneMUD.gmcp.charVitals()
   raiseEvent("DuneMUDVitals", gmcp.Char.Vitals)
 end
 
+function DuneMUD.gmcp.charStatus()
+  raiseEvent("DuneMUDCharStatus", gmcp.Char)
+end
+
 function DuneMUD.gmcp.channelList()
   raiseEvent("DuneMUDChannelList", gmcp.Comm.Channel.List)
 end

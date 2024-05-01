@@ -7,6 +7,8 @@ DuneMUD.character = DuneMUD.character or {
   maxhp = 100,
   cp = 100,
   maxcp = 100,
+  Status = {},
+  Stats = {},
 }
 
 function DuneMUD.character.login(_, charData)
@@ -33,4 +35,17 @@ function DuneMUD.character.vitalsUpdate(_, charVitals)
   end
   
   raiseEvent("DuneMUD.character.vitalsUpdated")
+end
+
+function DuneMUD.character.statusUpdate(_, charData)
+  DuneMUD.character.Status = charData.Status
+  DuneMUD.character.Stats.Strength = charData.Stats.str
+  DuneMUD.character.Stats.Constitution = charData.Stats.con
+  DuneMUD.character.Stats.Intelligence = charData.Stats.int
+  DuneMUD.character.Stats.Wisdom = charData.Stats.wis
+  DuneMUD.character.Stats.Dexterity = charData.Stats.dex
+  DuneMUD.character.Stats.Quickness = charData.Stats.qui
+
+  raiseEvent("DuneMUD.character.statusUpdated", DuneMUD.character.Status)
+  raiseEvent("DuneMUD.character.statsUpdated", DuneMUD.character.Stats)
 end
