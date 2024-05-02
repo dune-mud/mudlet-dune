@@ -7,8 +7,17 @@ DuneMUD.character = DuneMUD.character or {
   maxhp = 100,
   cp = 100,
   maxcp = 100,
+  Guild = {},
+  Skills = {},
   Status = {},
-  Stats = {},
+  Stats = {
+    Strength = 0,
+    Constitution = 0,
+    Intelligence = 0,
+    Wisdom = 0,
+    Dexterity = 0,
+    Quickness = 0
+  },
 }
 
 function DuneMUD.character.login(_, charData)
@@ -38,14 +47,41 @@ function DuneMUD.character.vitalsUpdate(_, charVitals)
 end
 
 function DuneMUD.character.statusUpdate(_, charData)
-  DuneMUD.character.Status = charData.Status
-  DuneMUD.character.Stats.Strength = charData.Stats.str
-  DuneMUD.character.Stats.Constitution = charData.Stats.con
-  DuneMUD.character.Stats.Intelligence = charData.Stats.int
-  DuneMUD.character.Stats.Wisdom = charData.Stats.wis
-  DuneMUD.character.Stats.Dexterity = charData.Stats.dex
-  DuneMUD.character.Stats.Quickness = charData.Stats.qui
+  
+  if charData.Status then
+    DuneMUD.character.Status = charData.Status
+    raiseEvent("DuneMUD.character.statusUpdated", DuneMUD.character.Status)
+  end
 
-  raiseEvent("DuneMUD.character.statusUpdated", DuneMUD.character.Status)
+  if charData.Stats = nil then
+    return
+  end
+
+  local stats = charData.Stats
+
+  if stats.str then
+    DuneMUD.character.Stats.Strength = charData.Stats.str
+  end
+
+  if stats.con then
+    DuneMUD.character.Stats.Constitution = stats.con
+  end
+
+  if stats.int then
+    DuneMUD.character.Stats.Intelligence = charData.Stats.int
+  end
+
+  if stats.wis then
+    DuneMUD.character.Stats.Wisdom = charData.Stats.wis
+  end
+
+  if stats.dex then
+    DuneMUD.character.Stats.Dexterity = charData.Stats.dex
+  end
+
+  if stats.qui then
+    DuneMUD.character.Stats.Quickness = charData.Stats.qui
+  end
+
   raiseEvent("DuneMUD.character.statsUpdated", DuneMUD.character.Stats)
 end

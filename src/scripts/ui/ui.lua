@@ -274,6 +274,9 @@ function DuneMUD.ui.hide()
   GUI.top:hide()
 end
 
+function DuneMUD.ui.onSkillsUpdate(_, charSkills)
+end
+
 function DuneMUD.ui.onStatusUpdate(_, charStatus)
 end
 
