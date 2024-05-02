@@ -146,8 +146,8 @@ local function setupVitals()
     name = "hpGauge",
     updateEvent = "DuneMUD.character.vitalsUpdated",
     textTemplate = "<center>|c/|m HP (|p%)</center>",
-    currentVariable = "DuneMUD.character.hp",
-    maxVariable = "DuneMUD.character.maxhp",
+    currentVariable = "DuneMUD.character.Vitals.hp",
+    maxVariable = "DuneMUD.character.Vitals.maxhp",
     strict = true,
   }, GUI.vitalsGaugeBox)
   GUI.hpGauge.front:setStyleSheet(getGaugeCss("green"))
@@ -158,8 +158,8 @@ local function setupVitals()
     name = "cpGauge",
     updateEvent = "DuneMUD.character.vitalsUpdated",
     textTemplate = "<center>|c/|m CP (|p%)</center>",
-    currentVariable = "DuneMUD.character.cp",
-    maxVariable = "DuneMUD.character.maxcp",
+    currentVariable = "DuneMUD.character.Vitals.sp",
+    maxVariable = "DuneMUD.character.Vitals.maxsp",
     strict = true,
   }, GUI.vitalsGaugeBox)
   GUI.cpGauge.front:setStyleSheet(getGaugeCss("goldenrod"))
@@ -195,6 +195,16 @@ local function setupTopRight()
   }, GUI.right)
 end
 
+local statTypes = {
+  str = "Strength",
+  con = "Constitution",
+  int = "Intelligence",
+  wis = "Wisdom",
+  dex = "Dexterity",
+  qui = "Quickness"
+  
+}
+
 local function setupStats()
   local GUI = DuneMUD.ui.GUI
 
@@ -222,12 +232,11 @@ local function setupStats()
 
   testMaker:addColumn({ name = "Stats" , width = 19, textColor = "<orange>"})
   testMaker:addColumn({name = "", width = 19, textColor = "<green>"})
-  testMaker:addRow({ "Strength", "1" })
-  testMaker:addRow({ "Constitution", "1" })
-  testMaker:addRow({ "Intelligence", "1" })
-  testMaker:addRow({ "Wisdom", "1" })
-  testMaker:addRow({ "Dexterity", "1" })
-  testMaker:addRow({ "Quickness", "1" })
+  for k, v in pairs(statTypes) do
+    testMaker:addRow({ v, "1"})
+  end
+
+  GUI.statsConsole:clear()
   GUI.statsConsole:cecho(testMaker:assemble())
 end
 
@@ -293,7 +302,8 @@ function DuneMUD.ui.onStatsUpdate(_, charStats)
   testMaker:addColumn({ name = "Stats" , width = 19, textColor = "<orange>"})
   testMaker:addColumn({name = "", width = 19, textColor = "<green>"})
   for k, v in pairs(charStats) do
-    testMaker:addRow({ k, tostring(v)})
+    local statType = statTypes[k]
+    testMaker:addRow({ statType, tostring(v)})
   end
   GUI.statsConsole:clear()
   GUI.statsConsole:cecho(testMaker:assemble())

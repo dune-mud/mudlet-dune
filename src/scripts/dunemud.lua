@@ -26,6 +26,8 @@ DuneMUD.eventHandlers = {
   { "gmcp.Char.Name", "DuneMUD.gmcp.charName", nil },
   { "gmcp.Char.Vitals", "DuneMUD.gmcp.charVitals", nil },
   { "gmcp.Char.Status", "DuneMUD.gmcp.charStatus", nil },
+  { "gmcp.Char.Guild", "DuneMUD.gmcp.charGuild", nil },
+  { "gmcp.Char", "DuneMUD.gmcp.char", nil },
   { "gmcp.Comm.Channel.List", "DuneMUD.gmcp.channelList", nil },
   { "gmcp.Comm.Channel.Text", "DuneMUD.gmcp.channelText", nil },
   { "gmcp.Room.Info", "DuneMUD.gmcp.roomInfo", nil },
@@ -33,7 +35,10 @@ DuneMUD.eventHandlers = {
   -- Character handlers.
   { "DuneMUDLogin", "DuneMUD.character.login", nil },
   { "DuneMUDVitals", "DuneMUD.character.vitalsUpdate", nil },
+  { "DuneMUDCharStats", "DuneMUD.character.statsUpdate", nil },
+  { "DuneMUDCharSkills", "DuneMUD.character.skillsUpdate", nil },
   { "DuneMUDCharStatus", "DuneMUD.character.statusUpdate", nil },
+  { "DuneMUDCharGuild", "DuneMUD.character.guildUpdate", nil },
 
   -- UI handlers. These are defined in ui.lua and should only
   -- be reacting to DuneMUDXXX events.
