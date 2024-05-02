@@ -53,7 +53,7 @@ function DuneMUD.character.statusUpdate(_, charData)
     raiseEvent("DuneMUD.character.statusUpdated", DuneMUD.character.Status)
   end
 
-  if charData.Stats = nil then
+  if charData.Stats == nil then
     return
   end
 
