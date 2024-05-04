@@ -111,14 +111,14 @@ end
 
 local function getGaugeCss(backgroundColor)
   local res = f[[
-		background-color: {backgroundColor};
-		border-style: solid;
-		border-color: white;
-		border-width: 1px;
-		border-radius: 5px;
-		margin: 5px;
-	]]
-	return res
+    background-color: {backgroundColor};
+    border-style: solid;
+    border-color: white;
+    border-width: 1px;
+    border-radius: 5px;
+    margin: 5px;
+  ]]
+  return res
 end
 
 local function setupVitals()
@@ -153,7 +153,7 @@ local function setupVitals()
   GUI.hpGauge.front:setStyleSheet(getGaugeCss("green"))
   GUI.hpGauge.back:setStyleSheet(getGaugeCss("black"))
   GUI.hpGauge:setFontSize(14)
-  
+
   GUI.cpGauge = GUI.cpGauge or SUG:new({
     name = "cpGauge",
     updateEvent = "DuneMUD.character.vitalsUpdated",
@@ -202,7 +202,6 @@ local statTypes = {
   wis = "Wisdom",
   dex = "Dexterity",
   qui = "Quickness"
-  
 }
 
 local function setupStats()
@@ -222,7 +221,7 @@ local function setupStats()
     scrollBar = false,
     fontSize = 14,
   }, GUI.statsBox)
-  
+
   local testMaker = TableMaker:new({
     title = "Stats",
     printTitle = "true",
