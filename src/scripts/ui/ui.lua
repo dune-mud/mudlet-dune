@@ -10,6 +10,8 @@ DuneMUD.ui = DuneMUD.ui or {}
 DuneMUD.ui.GUI = DuneMUD.ui.GUI or {}
 
 local EMCO = require("@PKGNAME@.mdk.emco")
+local SUG = require("@PKGNAME@.mdk.sug")
+local TableMaker = require("@PKGNAME@.mdk.ftext").TableMaker
 
 require("@PKGNAME@.tabwindow.tabwindow")
 
@@ -107,6 +109,18 @@ local function setupChannels()
   }, GUI.top)
 end
 
+local function getGaugeCss(backgroundColor)
+  local res = f[[
+		background-color: {backgroundColor};
+		border-style: solid;
+		border-color: white;
+		border-width: 1px;
+		border-radius: 5px;
+		margin: 5px;
+	]]
+	return res
+end
+
 local function setupVitals()
   local GUI = DuneMUD.ui.GUI
 
@@ -128,15 +142,30 @@ local function setupVitals()
     width = -15,
   }, GUI.vitalsWindow.Vitalscenter)
 
-  GUI.hpGauge = GUI.hpGauge or Geyser.Gauge:new({
+  GUI.hpGauge = GUI.hpGauge or SUG:new({
     name = "hpGauge",
+    updateEvent = "DuneMUD.character.vitalsUpdated",
+    textTemplate = "<center>|c/|m HP (|p%)</center>",
+    currentVariable = "DuneMUD.character.Vitals.hp",
+    maxVariable = "DuneMUD.character.Vitals.maxhp",
+    strict = true,
   }, GUI.vitalsGaugeBox)
-  GUI.hpGauge:setValue(1, 100, "No character connected...")
-
-  GUI.cpGauge = GUI.cpGauge or Geyser.Gauge:new({
+  GUI.hpGauge.front:setStyleSheet(getGaugeCss("green"))
+  GUI.hpGauge.back:setStyleSheet(getGaugeCss("black"))
+  GUI.hpGauge:setFontSize(14)
+  
+  GUI.cpGauge = GUI.cpGauge or SUG:new({
     name = "cpGauge",
+    updateEvent = "DuneMUD.character.vitalsUpdated",
+    textTemplate = "<center>|c/|m CP (|p%)</center>",
+    currentVariable = "DuneMUD.character.Vitals.sp",
+    maxVariable = "DuneMUD.character.Vitals.maxsp",
+    strict = true,
   }, GUI.vitalsGaugeBox)
-  GUI.cpGauge:setValue(1, 100, "No character connected...")
+  GUI.cpGauge.front:setStyleSheet(getGaugeCss("goldenrod"))
+  GUI.cpGauge.back:setStyleSheet(getGaugeCss("black"))
+  GUI.cpGauge:setFontSize(14)
+
 end
 
 local function setupMap()
@@ -166,6 +195,51 @@ local function setupTopRight()
   }, GUI.right)
 end
 
+local statTypes = {
+  str = "Strength",
+  con = "Constitution",
+  int = "Intelligence",
+  wis = "Wisdom",
+  dex = "Dexterity",
+  qui = "Quickness"
+  
+}
+
+local function setupStats()
+  local GUI = DuneMUD.ui.GUI
+
+  GUI.statsBox = GUI.statsBox or Geyser.VBox:new({
+    name = "statsBox",
+    x = 15,
+    y = 15,
+    height = -15,
+    width = -15,
+  }, GUI.topRight.Statscenter)
+
+  GUI.statsConsole = GUI.statsConsole or Geyser.MiniConsole:new({
+    name = "statsConsole",
+    color = "black",
+    scrollBar = false,
+    fontSize = 14,
+  }, GUI.statsBox)
+  
+  local testMaker = TableMaker:new({
+    title = "Stats",
+    printTitle = "true",
+    titleColor = "<red>",
+    printHeaders = false,
+  })
+
+  testMaker:addColumn({ name = "Stats" , width = 19, textColor = "<orange>"})
+  testMaker:addColumn({name = "", width = 19, textColor = "<green>"})
+  for k, v in pairs(statTypes) do
+    testMaker:addRow({ v, "1"})
+  end
+
+  GUI.statsConsole:clear()
+  GUI.statsConsole:cecho(testMaker:assemble())
+end
+
 function DuneMUD.ui.setup()
   DuneMUD.ui.GUI = DuneMUD.ui.GUI or {}
 
@@ -173,6 +247,7 @@ function DuneMUD.ui.setup()
   setupChannels()
   setupVitals()
   setupTopRight()
+  setupStats()
   setupMap()
 
   DuneMUD.ui.show()
@@ -208,34 +283,30 @@ function DuneMUD.ui.hide()
   GUI.top:hide()
 end
 
-function DuneMUD.ui.onVitalsUpdated(_, characterVitals)
+function DuneMUD.ui.onSkillsUpdate(_, charSkills)
+end
+
+function DuneMUD.ui.onStatusUpdate(_, charStatus)
+end
+
+function DuneMUD.ui.onStatsUpdate(_, charStats)
   local GUI = DuneMUD.ui.GUI
-  local characterVitals = characterVitals or {}
 
-  local hp = characterVitals.hp or 80
-  local maxhp = characterVitals.maxhp or 100
-  if maxhp > 0 then
-    local hppercent = (hp / maxhp) * 100
-    GUI.hpGauge:echo(string.format("%d/%d HP (%d%%)", hp, maxhp, hppercent))
-    -- Dune lets you have more than 100% HP, but setting the gauge this way
-    -- results in over-drawing.
-    if hppercent > 100 then
-      maxhp = hp
-    end
-    GUI.hpGauge:setValue(hp, maxhp)
-  end
+  local testMaker = TableMaker:new({
+    title = "Stats",
+    printTitle = "true",
+    titleColor = "<red>",
+    printHeaders = false,
+  })
 
-  local cp = characterVitals.cp or 80
-  local maxcp = characterVitals.maxcp or 100
-  if maxcp > 0 then
-    local cppercent = (cp / maxcp) * 100
-    GUI.cpGauge:echo(string.format("%d/%d CP (%d%%)", cp, maxcp, cppercent))
-    -- Ditto for CP. Don't over-draw for 100%+
-    if cppercent > 100 then
-      maxcp = cp
-    end
-    GUI.cpGauge:setValue(cp, maxcp)
+  testMaker:addColumn({ name = "Stats" , width = 19, textColor = "<orange>"})
+  testMaker:addColumn({name = "", width = 19, textColor = "<green>"})
+  for k, v in pairs(charStats) do
+    local statType = statTypes[k]
+    testMaker:addRow({ statType, tostring(v)})
   end
+  GUI.statsConsole:clear()
+  GUI.statsConsole:cecho(testMaker:assemble())
 end
 
 function DuneMUD.ui.onChannelList(_, channelList)

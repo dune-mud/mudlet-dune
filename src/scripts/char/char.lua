@@ -3,10 +3,11 @@
 --
 DuneMUD = DuneMUD or {}
 DuneMUD.character = DuneMUD.character or {
-  hp = 100,
-  maxhp = 100,
-  sp = 100,
-  maxsp = 100,
+  Vitals = {},
+  Guild = {},
+  Skills = {},
+  Status = {},
+  Stats = {}
 }
 
 function DuneMUD.character.login(_, charData)
@@ -19,17 +20,40 @@ function DuneMUD.character.login(_, charData)
 end
 
 function DuneMUD.character.vitalsUpdate(_, charVitals)
-  -- an initial update with just a character name was received.
-  if charVitals.maxhp == 0 and charVitals.maxcp == 0 then
+  if charVitals == nil then
     return
   end
+  DuneMUD.character.Vitals = charVitals
+  raiseEvent("DuneMUD.character.vitalsUpdated")
+end
 
-  -- Update character vitals
-  DuneMUD.character.hp = charVitals.hp
-  DuneMUD.character.maxhp = charVitals.maxhp
-  -- NB: We translate from SP -> CP here.
-  DuneMUD.character.cp = charVitals.sp
-  DuneMUD.character.maxcp = charVitals.maxsp
+function DuneMUD.character.statusUpdate(_, charData)
+  if charData.Status == nil then
+    return
+  end
+  DuneMUD.character.Status = charData.Status
+  raiseEvent("DuneMUD.character.statusUpdated", DuneMUD.character.Status)
+end
 
-  raiseEvent("DuneMUDVitalsUpdated", DuneMUD.character)
+function DuneMUD.character.statsUpdate(_, charStats)
+  if charStats == nil then
+    return
+  end
+  DuneMUD.character.Stats = charStats
+  raiseEvent("DuneMUD.character.statsUpdated", DuneMUD.character.Stats)
+end
+
+function DuneMUD.character.guildUpdate(_, charGuild)
+  if charGuild == nil then
+    return
+  end
+  DuneMUD.character.Guild = charGuild
+  -- raiseEvent("DuneMUD.character.guildUpdated", DuneMUD.character.Guild)
+end
+function DuneMUD.character.skillsUpdate(_, charSkills)
+  if charSkills == nil then
+    return
+  end
+  DuneMUD.character.Skills = charSkills
+  -- raiseEvent("DuneMud.character.skillsUpdated", DuneMUD.character.Skills)
 end
